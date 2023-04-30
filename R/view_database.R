@@ -24,6 +24,7 @@
 #' @importFrom shiny observeEvent
 #' @importFrom shiny stopApp
 #' @importFrom shiny bootstrapPage
+#' @importFrom shinyWidgets prettySwitch
 #' @importFrom shiny req
 #' @importFrom shinyAce aceEditor
 #' @importFrom shinyAce updateAceEditor
@@ -52,8 +53,8 @@
 #'
 view_database <-
   function(con, options = list()){
-    light <- bs_theme()
-    dark <- bs_theme(bg = "black", fg = "white", primary = "purple")
+    light <- bs_theme(version = 5)
+    dark <- bs_theme(version = 5,bg = "black", fg = "white", primary = "purple")
 
     ui <- shiny::bootstrapPage(
       # theme = bslib::bs_theme(
@@ -168,7 +169,12 @@ view_database <-
           shiny::div(
             class = "d-none d-md-block col-12 col-md-6 col-lg-7 bg-light pb-2 pt-1 mt-3 mt-md-0 border rounded shadow",
             id = "queryDiv",
-            shiny::checkboxInput("dark_mode", "Dark mode"),
+            shinyWidgets::prettySwitch(
+              inputId = "dark_mode",
+              label = "Dark mode",
+              status = "primary",
+              fill = TRUE
+            ),
             shiny::div(
               class = "row h-100 pt-1",
               shiny::div(
