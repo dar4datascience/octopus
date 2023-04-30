@@ -14,6 +14,7 @@
 #' @importFrom shiny p
 #' @importFrom shiny h3
 #' @importFrom shiny selectInput
+#' @importFrom shiny checkboxInput
 #' @importFrom shiny fileInput
 #' @importFrom shiny showModal
 #' @importFrom shiny modalDialog
@@ -42,6 +43,7 @@
 #' @importFrom httr use_proxy
 #' @importFrom httr content
 #' @importFrom bslib bs_theme
+#' @importFrom bslib bs_themer
 #' @importFrom utils write.csv
 #'
 #'
@@ -50,11 +52,14 @@
 #'
 view_database <-
   function(con, options = list()){
-    ui <- shiny::bootstrapPage(
-      theme = bslib::bs_theme(
-        version = 5
-      ),
+    light <- bs_theme()
+    dark <- bs_theme(bg = "black", fg = "white", primary = "purple")
 
+    ui <- shiny::bootstrapPage(
+      # theme = bslib::bs_theme(
+      #   version = 5
+      # ),
+      theme = light,
       # Initiate shinyjs
       shinyjs::useShinyjs(),
 
@@ -163,7 +168,7 @@ view_database <-
           shiny::div(
             class = "d-none d-md-block col-12 col-md-6 col-lg-7 bg-light pb-2 pt-1 mt-3 mt-md-0 border rounded shadow",
             id = "queryDiv",
-
+            shiny::checkboxInput("dark_mode", "Dark mode"),
             shiny::div(
               class = "row h-100 pt-1",
               shiny::div(
@@ -172,6 +177,7 @@ view_database <-
                 shinyAce::aceEditor(
                   "query",
                   mode = "pgsql",
+                  theme = 'tomorrow_night_blue',
                   height = "100%",
                   value = "",
                   showPrintMargin = FALSE,
@@ -197,7 +203,10 @@ view_database <-
     )
 
     server <- function(input, output, session) {
-
+      #bslib::bs_themer()
+      shiny::observe(session$setCurrentTheme(
+        if (isTRUE(input$dark_mode)) dark else light
+      ))
       # Database Functions -----------------------------------------------------
       driver <- class(con)
 
